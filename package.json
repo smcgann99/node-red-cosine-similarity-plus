@@ -16,14 +16,18 @@
   },
   "author": "S.McGann",
   "node-red": {
+    "version": ">=4.0.0",
     "nodes": {
-      "CalculateCosine": "calculate-cosine.js"
+      "cosine-similarity-plus": "calculate-cosine.js"
     }
   },
   "dependencies": {
     "fs": "^0.0.1-security"
   },
   "private": false,
+  "engines": {
+        "node": ">=18"
+    },
   "bugs": {
     "url": "https://github.com/smcgann99/node-red-cosine-similarity-plus/issues"
   },

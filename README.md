@@ -1,4 +1,4 @@
-# @smcgann99/calculate-cosine-plus
+# @smcgann99/node-red-cosine-similarity-plus
 
 [![platform](https://img.shields.io/badge/platform-Node--RED-red)](https://nodered.org)
 [![npm version](https://badge.fury.io/js/@good-i-deer%2Fnode-red-contrib-cosine-similarity.svg)](https://badge.fury.io/js/@good-i-deer%2Fnode-red-contrib-cosine-similarity)
@@ -11,7 +11,7 @@ This node requires node.js version 18.16.1 and Node-RED version 3.1.0.
 <hr>
 
 ## Description
-This node calculates cosine similarity between two vectors and return it as an array. It can calculate multiple arrays of vectors. The output can be used for detecting if there are cases where the similarity is above a cerain value.
+This node calculates cosine similarity between two vectors and returns it as an array. It can calculate multiple arrays of vectors. The output can be used for detecting if there are cases where the similarity is above a certain value.
 
 ```javascript
 var input_array1 = [
@@ -37,7 +37,7 @@ var outout_array = [
 
 ## Pre-requisites
 
-The node-red-contrib-cosine-similarity requires [Node-RED](https://nodered.org) to be installed.
+node-red-cosine-similarity-plus requires [Node-RED](https://nodered.org) to be installed.
 
 <hr>
 
@@ -45,7 +45,7 @@ The node-red-contrib-cosine-similarity requires [Node-RED](https://nodered.org) 
 
 ```
 cd ~/.node-red
-npm install @smcgann99/calculate-cosine-plus
+npm install @smcgann99/node-red-cosine-similarity-plus
 ```
 
 Restart your Node-RED instance
@@ -156,7 +156,7 @@ Here are some example flows of cosine similarity.
 <hr>
 
 
-## Authors
+## Original Authors
 
 [**GOOD-I-DEER**](https://github.com/GOOD-I-DEER) in SSAFY(Samsung Software Academy for Youth) 9th
 

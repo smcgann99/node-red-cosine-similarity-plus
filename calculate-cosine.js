@@ -95,5 +95,5 @@ module.exports = function (RED) {
       }
     });
   }
-  RED.nodes.registerType("calculate-cosine-plus", CalculateCosine);
+  RED.nodes.registerType("cosine-similarity-plus", CalculateCosine);
 };

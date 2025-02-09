@@ -1,6 +1,6 @@
 {
-  "name": "@smcgann99/calculate-cosine-plus",
-  "version": "1.0.1",
+  "name": "@smcgann99/node-red-cosine-similarity-plus",
+  "version": "0.0.1",
   "description": "Calculates cosine similarity of two vector values in Node-RED",
   "keywords": [
     "node-red",
@@ -14,7 +14,7 @@
     "type": "git",
     "url": "https://github.com/smcgann99/node-red-cosine-similarity-plus"
   },
-  "author": "GOOD-I-DDER",
+  "author": "S.McGann",
   "node-red": {
     "nodes": {
       "CalculateCosine": "calculate-cosine.js"

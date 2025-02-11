@@ -11,26 +11,29 @@ This node requires node.js version 18.16.1 and Node-RED version 3.1.0.
 <hr>
 
 ## Description
-This node calculates cosine similarity between two vectors and returns it as an array. It can calculate multiple arrays of vectors. The output can be used for detecting if there are cases where the similarity is above a certain value.
+This node calculates cosine similarity between two arrays of vectors. One passed in by msg.payload and one stored in a file or context.
+It returns the similarity as an array of arrays. This output can be used for detecting if there are cases where the similarity is above a certain value.
+
 
 ```javascript
-var input_array1 = [
-	[ "arrays of vectors 1" ],
-	[ "arrays of vectors 2" ],
-	[ "arrays of vectors 3" ]
-]
+ input = array[2] // (2 faces)
 
-var input_array2 = [
-	[ "arrays of vectors 4" ],
-	[ "arrays of vectors 5" ],
-	[ "arrays of vectors 6" ]
-]
+ 0: array[512] // 512 elements for each face.
+ 1: array[512]
 
-var outout_array = [
-	[ "arrays of cosine similarity between input_array2 and arrays of vectors 1" ],
-	[ "arrays of cosine similarity between input_array2 and arrays of vectors 2" ],
-	[ "arrays of cosine similarity between input_array2 and arrays of vectors 3" ]
-]
+ stored = array[6] // number of face images stored.
+
+ 0: array[512]
+ 1: array[512]
+ 2: array[512]
+ 3: array[512]
+ 4: array[512]
+ 5: array[512]
+
+ output payload: array[2] 
+
+ 0: array[6] // similarity between each input face and each stored face.
+ 1: array[6]
 ```
 
 <hr>
@@ -56,7 +59,7 @@ Restart your Node-RED instance
 
 Array of Vector Arrays
 
-- The input is an array of vector arrays.
+- The input is an array of vector arrays. (created by the vectorize node) 
 
 <hr>
 
@@ -68,9 +71,9 @@ Name
 
 - The name of the node displayed on the screen.
 
-File
+Vectors
 
-- File path of file that contains another array of vector arrays. This file will be compared with the input vector array. Can not be empty.
+- File or context path of file or variable, that contains another array of vector arrays. This will be compared with the input vector array. Can not be empty.
 
 <hr>
 
@@ -78,7 +81,7 @@ File
 
 Array of Cosine Similarity Arrays
 
-- The output is an array of cosine similarity arrays. Each cosine similarity is similarity between vector of input and vector of file.
+- The output is an array of cosine similarity arrays. Each cosine similarity array is similarity between vector of input and vectors of file / variable.
 
 <hr>
 
@@ -155,6 +158,10 @@ Here are some example flows of cosine similarity.
 
 <hr>
 
+## Author Modified Version
+
+- [S.McGann](https://github.com/smcgann99)
+
 
 ## Original Authors
 
@@ -171,7 +178,8 @@ Here are some example flows of cosine similarity.
 
 ## Copyright and license
 
-Copyright S.McGann 2025 under the [Apache 2.0 license](https://www.apache.org/licenses/LICENSE-2.0)
+Copyright S.McGann 2025 (Modified Version)
+Copyright Samsung Automation Studio Team under the [Apache 2.0 license](https://www.apache.org/licenses/LICENSE-2.0)
 
 <hr>
 

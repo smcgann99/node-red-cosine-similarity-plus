@@ -24,10 +24,10 @@
         paletteLabel: "Cosine Similarity Plus",
         icon: "function.svg",
         label: function () {
-            return this.name || "Cosine Similarity Plus";
+            return this.name || "Cosine Similarity";
         },
-        inputLabels: ["Face Vector Array(s)"],
-        outputLabels: ["Cosine Similarity Array(s)"],
+        inputLabels: ["Face Vector Arrays"],
+        outputLabels: ["Cosine Similarity Arrays"],
         oneditprepare: function () {
             $("#node-input-file").typedInput({
                 default: 'path',
@@ -35,7 +35,7 @@
                 types:  [
                         {
                             value: "path",
-                            label: "path.",
+                            label: "path",
                         },
                         "flow",
                         "global"
@@ -64,6 +64,6 @@
     </div>
 </script>
 
-<script type="text/html" data-help-name="cosine-similarity-plus"></script>
+<script type="text/html" data-help-name="cosine-similarity-plus">
     <p>calculate cosine similarity of two vector values</p>
 </script>

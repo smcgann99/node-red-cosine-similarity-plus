@@ -1,5 +1,5 @@
 {
-  "name": "@smcgann99/node-red-cosine-similarity-plus",
+  "name": "@smcgann/node-red-cosine-similarity-plus",
   "version": "0.0.1",
   "description": "Calculates cosine similarity of two vector values in Node-RED",
   "keywords": [
@@ -22,7 +22,7 @@
     }
   },
   "dependencies": {
-    "fs": "^0.0.1-security"
+    "fs-extra": ">=11.2.0"
   },
   "private": false,
   "engines": {

@@ -45,7 +45,7 @@ node-red-cosine-similarity-plus requires [Node-RED](https://nodered.org) to be i
 
 ```
 cd ~/.node-red
-npm install @smcgann99/node-red-cosine-similarity-plus
+npm install @smcgann/node-red-cosine-similarity-plus
 ```
 
 Restart your Node-RED instance

@@ -65,7 +65,7 @@ Array of Vector Arrays
 
 ## property
 
-![cosine-similarity-pic](https://github.com/smcgann99/node-red-cosine-similarity-plus/assets/57957086/bfb4cd35-9198-4d50-80d7-9b6c664ff187)
+![cosine-similarity-pic](https://github.com/smcgann99/node-red-cosine-similarity-plus/assets/node.config.png)
 
 Name
 

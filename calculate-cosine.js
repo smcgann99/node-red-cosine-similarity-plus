@@ -44,7 +44,7 @@ module.exports = function (RED) {
     }
 
     async function getStoredVector() {
-      const fs = require("fs-extra");
+      const fs = require("fs");
       const fileType = config.fileType;
       const filePath = config.file;
 

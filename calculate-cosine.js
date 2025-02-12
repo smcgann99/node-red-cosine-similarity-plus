@@ -9,15 +9,29 @@ module.exports = function (RED) {
     RED.nodes.createNode(this, config);
 
     function calculateSimilarityForVectors(inputVectors, storedVectors) {
-      return inputVectors.map(inputVector => {
-        return storedVectors.map(storedVector => {
-          const result = cosineSimilarity(inputVector, storedVector);
-          if (result === ERROR_VECTOR_LENGTH_ZERO || result === ERROR_COSINE_SIMILARITY_NAN) {
-            return result; // Return error code directly for that pair
+      const results = {};
+
+      for (const personName in storedVectors) {
+        if (storedVectors.hasOwnProperty(personName)) {
+          results[personName] = {};
+
+          for (const fileName in storedVectors[personName]) {
+            if (storedVectors[personName].hasOwnProperty(fileName)) {
+              const storedVector = storedVectors[personName][fileName];
+
+              results[personName][fileName] = inputVectors.map(inputVector => {
+                const result = cosineSimilarity(inputVector, storedVector);
+                if (result === ERROR_VECTOR_LENGTH_ZERO || result === ERROR_COSINE_SIMILARITY_NAN) {
+                  return result; // Return error code directly for that pair
+                }
+                return result;
+              })[0]; // Directly assign the first (and only) value
+            }
           }
-          return result;
-        });
-      });
+        }
+      }
+
+      return results;
     }
 
     function cosineSimilarity(vectorA, vectorB) {
@@ -58,18 +72,17 @@ module.exports = function (RED) {
       } else if (fileType === "flow") {
         const storedVector = this.context().flow.get(filePath);
         if (!storedVector) return ERROR_VARIABLE_NOT_FOUND;
-        if (!Array.isArray(storedVector)) return ERROR_VARIABLE_NOT_ARRAY;
+        if (typeof storedVector !== 'object' || Array.isArray(storedVector)) return ERROR_VARIABLE_NOT_ARRAY;
         return storedVector;
       } else if (fileType === "global") {
         const storedVector = this.context().global.get(filePath);
         if (!storedVector) return ERROR_VARIABLE_NOT_FOUND;
-        if (!Array.isArray(storedVector)) return ERROR_VARIABLE_NOT_ARRAY;
+        if (typeof storedVector !== 'object' || Array.isArray(storedVector)) return ERROR_VARIABLE_NOT_ARRAY;
         return storedVector;
       }
     }
 
     this.on("input", async function (msg) {
-     
       let inputVectors = msg.payload; // Assume this is an array of vectors
       let storedVectors = await getStoredVector.call(this);
 
@@ -84,9 +97,9 @@ module.exports = function (RED) {
       } else {
         let results = calculateSimilarityForVectors(inputVectors, storedVectors);
         // Check for any error codes in the results
-        if (results.some(arr => arr.includes(ERROR_VECTOR_LENGTH_ZERO))) {
+        if (Object.values(results).some(person => Object.values(person).some(value => value === ERROR_VECTOR_LENGTH_ZERO))) {
           this.error("The vector length is 0, cannot calculate.", "Error");
-        } else if (results.some(arr => arr.includes(ERROR_COSINE_SIMILARITY_NAN))) {
+        } else if (Object.values(results).some(person => Object.values(person).some(value => value === ERROR_COSINE_SIMILARITY_NAN))) {
           this.error("The cosine similarity is NaN.", "Error");
         } else {
           msg.payload = results;

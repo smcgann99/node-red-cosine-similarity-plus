@@ -4,9 +4,23 @@
         color: '#1AE5BE',
         defaults: {
             name: { value: "" },
+            threshold: {
+                value: 0.1,
+                required: true,
+                validate: function (v) {
+                    let threshold = Number(v);
+                    if (isNaN(threshold) || threshold < 0 || threshold > 1 || v === "") {
+                        $("#threshold-warning").css("display", "block");
+                    } else {
+                        $("#threshold-warning").css("display", "none");
+                    }
+                    return !isNaN(threshold) && threshold >= 0 && threshold <= 1 && v !== "";
+                },
+            },
             fileType: { value: "path" },
             file: {
                 value: "",
+                required: true,
                 validate: function (v) {
                     let fileValue = String(v);
                     if (!fileValue) {
@@ -32,14 +46,14 @@
             $("#node-input-file").typedInput({
                 default: 'path',
                 typeField: "#node-input-fileType",
-                types:  [
-                        {
-                            value: "path",
-                            label: "path",
-                        },
-                        "flow",
-                        "global"
-                    ]
+                types: [
+                    {
+                        value: "path",
+                        label: "path",
+                    },
+                    "flow",
+                    "global"
+                ]
             });
         }
     });
@@ -50,7 +64,16 @@
         <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
         <input type="text" id="node-input-name" placeholder="Name">
     </div>
-
+    <div class="form-row">
+        <label for="node-input-threshold"><i class="fa fa-sliders"></i> Threshold</label>
+        <input type="number" id="node-input-threshold" step="0.01" min="0" max="1">
+        <p
+            id="threshold-warning"
+            style="color: red; display: none; margin-left: 105px;"  
+            >
+            Enter a value between 0 and 1.
+        </p>
+    </div>
     <div class="form-row">
         <label for="node-input-file"><i class="fa fa-file"></i> Vectors</label>
         <input type="text" id="node-input-file" >

@@ -11,10 +11,11 @@
                     let threshold = Number(v);
                     if (isNaN(threshold) || threshold < 0 || threshold > 1 || v === "") {
                         $("#threshold-warning").css("display", "block");
+                        return false;
                     } else {
                         $("#threshold-warning").css("display", "none");
+                        return true;
                     }
-                    return !isNaN(threshold) && threshold >= 0 && threshold <= 1 && v !== "";
                 },
             },
             fileType: { value: "path" },

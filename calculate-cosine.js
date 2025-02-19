@@ -2,34 +2,30 @@ const ERROR_VECTOR_LENGTH_ZERO = -100;
 const ERROR_COSINE_SIMILARITY_NAN = -200;
 const ERROR_FILE_PARSING = -500;
 const ERROR_VARIABLE_NOT_FOUND = -300;
-const ERROR_VARIABLE_NOT_OBJECT = -400;
 
 function calculateSimilarityForVectors(inputVectors, storedVectors) {
-  const results = inputVectors.map(inputVector => {
+  return inputVectors.map(inputVector => {
     const personResults = {};
 
     for (const personName in storedVectors) {
       if (storedVectors.hasOwnProperty(personName)) {
-        personResults[personName] = {};
+        const personStoredVectors = storedVectors[personName];
+        const personResult = {};
 
-        for (const fileName in storedVectors[personName]) {
-          if (storedVectors[personName].hasOwnProperty(fileName)) {
-            const storedVector = storedVectors[personName][fileName];
+        for (const fileName in personStoredVectors) {
+          if (personStoredVectors.hasOwnProperty(fileName)) {
+            const storedVector = personStoredVectors[fileName];
             const result = cosineSimilarity(inputVector, storedVector);
-            if (result === ERROR_VECTOR_LENGTH_ZERO || result === ERROR_COSINE_SIMILARITY_NAN) {
-              personResults[personName][fileName] = result; // Return error code directly for that pair
-            } else {
-              personResults[personName][fileName] = result;
-            }
+            personResult[fileName] = result;
           }
         }
+
+        personResults[personName] = personResult;
       }
     }
 
     return personResults;
   });
-
-  return results;
 }
 
 function cosineSimilarity(vectorA, vectorB) {
@@ -43,16 +39,12 @@ function cosineSimilarity(vectorA, vectorB) {
     magnitudeB += vectorB[i] * vectorB[i];
   }
 
-  magnitudeA = Math.sqrt(magnitudeA);
-  magnitudeB = Math.sqrt(magnitudeB);
-
   if (magnitudeA === 0 || magnitudeB === 0) {
     return ERROR_VECTOR_LENGTH_ZERO;
   }
 
-  const similarity = dotProduct / (magnitudeA * magnitudeB);
-  if (isNaN(similarity)) return ERROR_COSINE_SIMILARITY_NAN;
-  return similarity;
+  const similarity = dotProduct / (Math.sqrt(magnitudeA) * Math.sqrt(magnitudeB));
+  return isNaN(similarity) ? ERROR_COSINE_SIMILARITY_NAN : similarity;
 }
 
 async function getStoredVector(fileType, filePath, context) {
@@ -61,22 +53,17 @@ async function getStoredVector(fileType, filePath, context) {
   if (fileType === "path") {
     try {
       const data = await fs.promises.readFile(filePath, "utf8");
-      let validate = JSON.parse(data);
-      if (!isValidStoredVector(validate)) return ERROR_FILE_PARSING;
-      return validate;
+      const parsedData = JSON.parse(data);
+      return isValidStoredVector(parsedData) ? parsedData : ERROR_FILE_PARSING;
     } catch (err) {
       return ERROR_FILE_PARSING;
     }
   } else if (fileType === "flow") {
     const storedVector = context.flow.get(filePath);
-    if (!storedVector) return ERROR_VARIABLE_NOT_FOUND;
-    if (!isValidStoredVector(storedVector)) return ERROR_FILE_PARSING;
-    return storedVector;
+    return storedVector && isValidStoredVector(storedVector) ? storedVector : ERROR_VARIABLE_NOT_FOUND;
   } else if (fileType === "global") {
     const storedVector = context.global.get(filePath);
-    if (!storedVector) return ERROR_VARIABLE_NOT_FOUND;
-    if (!isValidStoredVector(storedVector)) return ERROR_FILE_PARSING;
-    return storedVector;
+    return storedVector && isValidStoredVector(storedVector) ? storedVector : ERROR_VARIABLE_NOT_FOUND;
   }
 }
 
@@ -103,13 +90,8 @@ module.exports = function (RED) {
     this.on("input", async function (msg) {
       let inputVectors = msg.payload; // Assume this is an array of vectors
 
-      const fileType = msg.cosineOptions && typeof msg.cosineOptions.fileType === 'string' && ['path', 'flow', 'global'].includes(msg.cosineOptions.fileType)
-        ? msg.cosineOptions.fileType
-        : config.fileType;
-
-      const filePath = msg.cosineOptions && typeof msg.cosineOptions.file === 'string'
-        ? msg.cosineOptions.file
-        : config.file;
+      const fileType = msg.cosineOptions?.fileType || config.fileType;
+      const filePath = msg.cosineOptions?.file || config.file;
 
       let storedVectors = await getStoredVector(fileType, filePath, this.context());
 
@@ -120,11 +102,9 @@ module.exports = function (RED) {
       } else if (storedVectors === ERROR_VARIABLE_NOT_FOUND) {
         this.error("Stored vectors variable not found.");
       } else {
-        const threshold = msg.cosineOptions && !isNaN(msg.cosineOptions.threshold) && msg.cosineOptions.threshold >= 0 && msg.cosineOptions.threshold <= 1 && msg.cosineOptions.threshold !== ""
-          ? msg.cosineOptions.threshold
-          : defaultThreshold;
+        const threshold = msg.cosineOptions?.threshold ?? defaultThreshold;
 
-        let results = calculateSimilarityForVectors(inputVectors, storedVectors, threshold);
+        let results = calculateSimilarityForVectors(inputVectors, storedVectors);
         // Check for any error codes in the results
         if (results.some(personResults => Object.values(personResults).some(person => Object.values(person).some(value => value === ERROR_VECTOR_LENGTH_ZERO)))) {
           this.error("The vector length is 0, cannot calculate.", "Error");
@@ -135,12 +115,14 @@ module.exports = function (RED) {
           results = results.map(personResults => {
             const filteredResults = {};
             for (const personName in personResults) {
-              filteredResults[personName] = {};
-              for (const fileName in personResults[personName]) {
-                if (personResults[personName][fileName] >= threshold) {
-                  filteredResults[personName][fileName] = personResults[personName][fileName];
+              const personResult = personResults[personName];
+              const filteredPersonResult = {};
+              for (const fileName in personResult) {
+                if (personResult[fileName] >= threshold) {
+                  filteredPersonResult[fileName] = personResult[fileName];
                 }
               }
+              filteredResults[personName] = filteredPersonResult;
             }
             return filteredResults;
           });

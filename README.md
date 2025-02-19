@@ -10,6 +10,9 @@ This node requires node.js version 18.16.1 and Node-RED version 3.1.0.
 
 <hr>
 
+✔ Modified **input data** format, to accept output from 🔗 [@smcgann/node-red-face-detection-plus](https://www.npmjs.com/package/@smcgann/node-red-face-detection-plus). 
+
+
 ## Description
 This node calculates cosine similarity between two arrays of vectors. One passed in by msg.payload and one stored in a file or context.
 It returns the similarity as an array of arrays. This output can be used for detecting if there are cases where the similarity is above a certain value.

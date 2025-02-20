@@ -22,10 +22,7 @@ This node is a significantly modified version of 🔗 [@good-i-deer/node-red-con
 ✔ Supports runtime configuration through `msg.cosineOptions` for dynamic settings.     
 ✔ Includes metadata in `msg.cosineConfig` (threshold used, file type, file path).     
 ✔ **Easier integration** into Node-RED flows.     
-✔      
-✔      
-✔      
-✔      
+     
 
 ---
 
@@ -104,17 +101,24 @@ Restart your Node-RED instance
 
 - The name of the node displayed on the screen.
 
+### 🎚️ **Threshold**
+
+- Results with a value equal to or above the specified threshold will be returned. Set the threshold to 0 to include all matches.
+
 ### 📂 **Vectors**
 
-- File or context path of file or variable, that contains another array of vector arrays. This will be compared with the input vector array. Cannot be empty.
+- File or context path of file or variable, that will be compared with the input vector array. Cannot be empty.
 
 ---
 
 ## **Output**
 
-### Array of Cosine Similarity Arrays
+### 📌 **msg.payload** → `Array`  
 
-- The output is an array of cosine similarity arrays. Each cosine similarity array is similarity between vector of input and vectors of file/variable.
+- The output is an array of name objects. Each containing the orginal source image file and percentage similarity to the input vectors.
+  
+### ⚙️ **msg.cosineConfig** → `Object` 
+- The configuration used for the calculations.
 
 ---
 

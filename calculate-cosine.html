@@ -24,11 +24,11 @@
                 required: true,
                 validate: function (v) {
                     let fileValue = String(v);
-                    if (!fileValue) {
-                        $("#nResults-warning").css("display", "block");
+                    if (v === "" || fileValue.trim() === "") {
+                        $("#fileValue-warning").css("display", "block");
                         return false;
                     } else {
-                        $("#nResults-warning").css("display", "none");
+                        $("#fileValue-warning").css("display", "none");
                         return true;
                     }
                 },
@@ -80,7 +80,7 @@
         <input type="text" id="node-input-file" >
         <input type="hidden" id="node-input-fileType">
         <p
-            id="nResults-warning"
+            id="fileValue-warning"
             style="color: red; display: none; margin-left: 105px;"
         >
             Enter file path or variable name.
@@ -89,5 +89,5 @@
 </script>
 
 <script type="text/html" data-help-name="cosine-similarity-plus">
-    <p>calculate cosine similarity of two vector values</p>
+    <p>Calculate cosine similarity of two vector values.</p>
 </script>

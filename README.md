@@ -1,172 +1,128 @@
-# @smcgann99/node-red-cosine-similarity-plus
-
 [![platform](https://img.shields.io/badge/platform-Node--RED-red)](https://nodered.org)
-[![npm version](https://badge.fury.io/js/@good-i-deer%2Fnode-red-contrib-cosine-similarity.svg)](https://badge.fury.io/js/@good-i-deer%2Fnode-red-contrib-cosine-similarity)
-[![GitHub license](https://img.shields.io/github/license/GOOD-I-DEER/node-red-contrib-cosine-similarity)](https://github.com/GOOD-I-DEER/node-red-contrib-cosine-similarity/blob/main/LICENSE)
+[![npm version](https://img.shields.io/npm/v/node-red-cosine-similarity-plus.svg)](https://www.npmjs.com/package/node-red-cosine-similarity-plus)
+[![Min Node Version](https://img.shields.io/node/v/node-red-cosine-similarity-plus)](https://www.npmjs.com/package/@smcgann/node-red-annotate-image-plus)
+[![GitHub license](https://img.shields.io/github/license/smcgann99/node-red-cosine-similarity-plus)](https://github.com/smcgann99/node-red-cosine-similarity-plus/blob/main/LICENSE)
 
-This module provides a node that calculates cosine similarity of two vector values in Node-RED.
+# @smcgann/node-red-cosine-similarity-plus
 
-This node requires node.js version 18.16.1 and Node-RED version 3.1.0.
+A <a href="http://nodered.org" target="_blank">Node-RED</a> node that calculates the cosine similarity, between a set of stored vectors and provided vector values. 
 
-<hr>
+This node is a significantly modified version of 🔗 [@good-i-deer/node-red-contrib-cosine-similarity](https://www.npmjs.com/package/@good-i-deer/node-red-contrib-cosine-similarity) and doesn't maintain compatibility with that node.
 
-✔ Modified **input data** format, to accept output from 🔗 [@smcgann/node-red-face-detection-plus](https://www.npmjs.com/package/@smcgann/node-red-face-detection-plus). 
+---
 
+## **Key Changes**
 
-## Description
-This node calculates cosine similarity between two arrays of vectors. One passed in by msg.payload and one stored in a file or context.
-It returns the similarity as an array of arrays. This output can be used for detecting if there are cases where the similarity is above a certain value.
+✔ **input data** - accepts payload direct from 🔗 [@smcgann/node-red-face-vectorization-plus](https://www.npmjs.com/package/@smcgann/node-red-face-vectorization-plus).   
+✔ Supports multiple stored vector locations: file, flow context, or global context.   
+✔ Stored vectors now also include names and image file data, for meaningful results.       
+✔ Returns sorted results, filtered by a configurable similarity threshold.       
+✔ Generates an error message if no results meet threshold.         
+✔ More robust error handling with validation for missing and invalid data structures.    
+✔ Supports runtime configuration through `msg.cosineOptions` for dynamic settings.     
+✔ Includes metadata in `msg.cosineConfig` (threshold used, file type, file path).     
+✔ **Easier integration** into Node-RED flows.     
+✔      
+✔      
+✔      
+✔      
 
+---
+
+## **Description**
+
+This node calculates cosine similarity between two sets of vectors. One passed in by `msg.payload` and one stored in a file or context variable.
+It returns the results in `msg.payload`as an array of objects, where the similarity is above set threshold.
 
 ```javascript
- input = array[2] // (2 faces)
+input = array[2] // (2 faces)
 
- 0: array[512] // 512 elements for each face.
- 1: array[512]
+0: array[0.12, 0.34, 0.56, "..."] // 512 vectors for each face.
+1: array[0.11, 0.22, 0.33, "..."]
 
- stored = array[6] // number of face images stored.
+// Stored as a nested object, with each key representing an individual person.
+storedVectors = 
+{
+  "Adam": {
+    "/full-path/Adam/Adam-01.jpg": [0.12, 0.34, 0.56, "..."], // 512 vectors for each face.
+    "/full-path/Adam/Adam-03.jpg": [0.23, 0.45, 0.67, "..."],
+    "/full-path/Adam/Adam-02.jpg": [0.34, 0.56, 0.78, "..."]
+  },
+  "Alison": {
+    "/full-path/Alison/Alison-01.jpg": [0.11, 0.22, 0.33, "..."],
+    "/full-path/Alison/Alison-02.jpg": [0.44, 0.55, 0.66, "..."]
+  }
+  // repeated for x number of people
 
- 0: array[512]
- 1: array[512]
- 2: array[512]
- 3: array[512]
- 4: array[512]
- 5: array[512]
+}
 
- output payload: array[2] 
-
- 0: array[6] // similarity between each input face and each stored face.
- 1: array[6]
+output = array[2] // (2 matches above threshold)
+[
+    { "Alison": { "/full-path/Alison/8.jpg": 0.7265643591861766 } },
+    { "Peter": { "/full-path/people/Peter/9.jpg": 0.6443388973714721 } }
+]
 ```
 
-<hr>
+---
 
-## Pre-requisites
+## **Installation**
 
-node-red-cosine-similarity-plus requires [Node-RED](https://nodered.org) to be installed.
+Either use the Edit Menu - Manage Palette option to install, or run the following command in your Node-RED user directory - typically `~/.node-red`
 
-<hr>
-
-## Install
-
-```
+```bash
 cd ~/.node-red
 npm install @smcgann/node-red-cosine-similarity-plus
 ```
 
 Restart your Node-RED instance
 
-<hr>
+---
 
-## Input
+## **Input Properties**
 
-Array of Vector Arrays
+### 📌 **msg.payload** → `Array`  
 
-- The input is an array of vector arrays. (created by the vectorize node) 
+- The input is an array of vector arrays. (created by the vectorize node)
+  
+### ⚙️ **msg.cosineOptions** → `Object` *(Optional)*  
+- Allows overriding node config settings dynamically.  
+- Example:  
+``` json
+{  
+  "threshold": 0.4,  
+  "fileType":"path",
+  "file":"/home/pi/vectortest.txt" 
+}  
+```
+---
 
-<hr>
+## **Node Properties**
 
-## property
+<img width="500" alt="Properties" src="https://raw.githubusercontent.com/smcgann99/node-red-cosine-similarity-plus/main/assets/config.png">
 
-![cosine-similarity-pic](https://github.com/smcgann99/node-red-cosine-similarity-plus/blob/main/assets/node-config.png)
-
-Name
+### 🏷️ **Name**
 
 - The name of the node displayed on the screen.
 
-Vectors
+### 📂 **Vectors**
 
-- File or context path of file or variable, that contains another array of vector arrays. This will be compared with the input vector array. Can not be empty.
+- File or context path of file or variable, that contains another array of vector arrays. This will be compared with the input vector array. Cannot be empty.
 
-<hr>
+---
 
-## Output
+## **Output**
 
-Array of Cosine Similarity Arrays
+### Array of Cosine Similarity Arrays
 
-- The output is an array of cosine similarity arrays. Each cosine similarity array is similarity between vector of input and vectors of file / variable.
+- The output is an array of cosine similarity arrays. Each cosine similarity array is similarity between vector of input and vectors of file/variable.
 
-<hr>
-
-## Examples
-
-Here are some example flows of cosine similarity.
-![example](https://github.com/smcgann99/node-red-cosine-similarity-plus/assets/57957086/d3150e3f-5d84-440d-80d4-5449125f2271)
-
-### JSON
-
-```
-[
-    {
-        "id": "02168a0656dc6f37",
-        "type": "tab",
-        "label": "Example Flow",
-        "disabled": false,
-        "info": "",
-        "env": []
-    },
-    {
-        "id": "0e57c1a384a6551d",
-        "type": "calculate-cosine",
-        "z": "02168a0656dc6f37",
-        "name": "",
-        "file": "C:\\Users\\SSAFY\\Desktop\\ssdc\\object\\vectors\\stored.txt",
-        "x": 350,
-        "y": 80,
-        "wires": [
-            [
-                "71c649b78711fc2a"
-            ]
-        ]
-    },
-    {
-        "id": "a1704726f1bf888d",
-        "type": "function",
-        "z": "02168a0656dc6f37",
-        "name": "temp function1",
-        "func": "msg.payload = msg.payload[0];\nreturn msg",
-        "outputs": 1,
-        "timeout": 0,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 120,
-        "y": 80,
-        "wires": [
-            [
-                "0e57c1a384a6551d"
-            ]
-        ]
-    },
-    {
-        "id": "71c649b78711fc2a",
-        "type": "debug",
-        "z": "02168a0656dc6f37",
-        "name": "Similarity Value",
-        "active": false,
-        "tosidebar": true,
-        "console": false,
-        "tostatus": false,
-        "complete": "payload",
-        "targetType": "msg",
-        "statusVal": "",
-        "statusType": "auto",
-        "x": 570,
-        "y": 80,
-        "wires": []
-    }
-]
-```
-
-<hr>
-
-## Author Modified Version
-
-- [S.McGann](https://github.com/smcgann99)
+---
 
 
-## Original Authors
+
+## ✍️ Authors
+
+**[S.McGann](https://github.com/smcgann99)** → Modified Version.
 
 [**GOOD-I-DEER**](https://github.com/GOOD-I-DEER) in SSAFY(Samsung Software Academy for Youth) 9th
 
@@ -174,21 +130,21 @@ Here are some example flows of cosine similarity.
 - [Yi Jong Min](https://github.com/chickennight)
 - [Lee Deok Yong](https://github.com/Gitgloo)
 - [Lee Che Lim](https://github.com/leecr1215)
-- [Lee Hyo Sik](https://github.com/hy06ix)
+- [Lee Hyo sik](https://github.com/hy06ix)
 - [Jung Gyu Sung](https://github.com/ramaking)
 
-<hr>
+---
 
-## Copyright and license
+## 📜 Copyright and license
 
-Copyright S.McGann 2025 (Modified Version)
+S.McGann → Modified Version   
 Copyright Samsung Automation Studio Team under the [Apache 2.0 license](https://www.apache.org/licenses/LICENSE-2.0)
 
-<hr>
+---
 
 ## Reference
 
 - [Node-RED Creating Nodes](https://nodered.org/docs/creating-nodes/)
 - [SamsungAutomationStudio Github Repository](https://github.com/Samsung/SamsungAutomationStudio)
 
-<hr>
+---

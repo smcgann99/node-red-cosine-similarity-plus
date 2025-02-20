@@ -5,26 +5,29 @@ const ERROR_VARIABLE_NOT_FOUND = -300;
 
 function calculateSimilarityForVectors(inputVectors, storedVectors) {
   return inputVectors.map(inputVector => {
-    const personResults = {};
+    let highestMatch = { personName: null, fileName: null, similarity: -Infinity };
 
     for (const personName in storedVectors) {
       if (storedVectors.hasOwnProperty(personName)) {
         const personStoredVectors = storedVectors[personName];
-        const personResult = {};
 
         for (const fileName in personStoredVectors) {
           if (personStoredVectors.hasOwnProperty(fileName)) {
             const storedVector = personStoredVectors[fileName];
             const result = cosineSimilarity(inputVector, storedVector);
-            personResult[fileName] = result;
+            if (result > highestMatch.similarity) {
+              highestMatch = { personName, fileName, similarity: result };
+            }
           }
         }
-
-        personResults[personName] = personResult;
       }
     }
 
-    return personResults;
+    if (highestMatch.personName !== null && highestMatch.fileName !== null) {
+      return { [highestMatch.personName]: { [highestMatch.fileName]: highestMatch.similarity } };
+    } else {
+      return {};
+    }
   });
 }
 
@@ -111,7 +114,7 @@ module.exports = function (RED) {
         } else if (results.some(personResults => Object.values(personResults).some(person => Object.values(person).some(value => value === ERROR_COSINE_SIMILARITY_NAN)))) {
           this.error("The cosine similarity is NaN.", "Error");
         } else {
-          // Filter results based on threshold
+          // Filter results based on threshold and remove empty records
           results = results.map(personResults => {
             const filteredResults = {};
             for (const personName in personResults) {
@@ -122,13 +125,15 @@ module.exports = function (RED) {
                   filteredPersonResult[fileName] = personResult[fileName];
                 }
               }
-              filteredResults[personName] = filteredPersonResult;
+              if (Object.keys(filteredPersonResult).length > 0) {
+                filteredResults[personName] = filteredPersonResult;
+              }
             }
             return filteredResults;
           });
 
           // Check if there are any results that meet the threshold
-          const hasResults = results.some(personResults => Object.keys(personResults).length > 0 && Object.values(personResults).some(person => Object.keys(person).length > 0));
+          const hasResults = results.some(personResults => Object.keys(personResults).length > 0);
           if (!hasResults) {
             this.error("No results - Try a lower threshold");
           } else {

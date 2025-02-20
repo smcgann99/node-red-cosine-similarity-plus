@@ -1,6 +1,6 @@
 [![platform](https://img.shields.io/badge/platform-Node--RED-red)](https://nodered.org)
-[![npm version](https://img.shields.io/npm/v/node-red-cosine-similarity-plus.svg)](https://www.npmjs.com/package/node-red-cosine-similarity-plus)
-[![Min Node Version](https://img.shields.io/node/v/node-red-cosine-similarity-plus)](https://www.npmjs.com/package/@smcgann/node-red-annotate-image-plus)
+[![npm version](https://img.shields.io/npm/v/@smcgann/node-red-cosine-similarity-plus.svg)](https://www.npmjs.com/package/@smcgann/node-red-cosine-similarity-plus)
+[![Min Node Version](https://img.shields.io/node/v/@smcgann/node-red-cosine-similarity-plus)](https://www.npmjs.com/package/@smcgann/node-red-cosine-similarity-plus)
 [![GitHub license](https://img.shields.io/github/license/smcgann99/node-red-cosine-similarity-plus)](https://github.com/smcgann99/node-red-cosine-similarity-plus/blob/main/LICENSE)
 
 # @smcgann/node-red-cosine-similarity-plus

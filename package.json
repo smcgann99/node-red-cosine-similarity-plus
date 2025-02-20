@@ -1,6 +1,6 @@
 {
   "name": "@smcgann/node-red-cosine-similarity-plus",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Calculates cosine similarity of two vector values in Node-RED",
   "keywords": [
     "node-red",

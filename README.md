@@ -79,7 +79,7 @@ Restart your Node-RED instance
 
 ### 📌 **msg.payload** → `Array`  
 
-- The input is an array of vector arrays. (created by the vectorize node)
+- The input is an array of vector arrays. (created by [@smcgann/node-red-face-vectorization-plus](https://www.npmjs.com/package/@smcgann/node-red-face-vectorization-plus))
   
 ### ⚙️ **msg.cosineOptions** → `Object` *(Optional)*  
 - Allows overriding node config settings dynamically.  
@@ -111,11 +111,11 @@ Restart your Node-RED instance
 
 ---
 
-## **Output**
+## **Output Properties**
 
 ### 📌 **msg.payload** → `Array`  
 
-- The output is an array of name objects. Each containing the orginal source image file and percentage similarity to the input vectors.
+- The output is an array of name objects. Each containing the path to the original face image file and a percentage similarity to the input vectors. Where no match is above the set threshold, an empty object is created to maintain the index order between names and bounding boxes.
   
 ### ⚙️ **msg.cosineConfig** → `Object` 
 - The configuration used for the calculations.
